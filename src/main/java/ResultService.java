@@ -1,3 +1,5 @@
+
+
 import java.sql.*;
 
 public class ResultService {
@@ -6,7 +8,6 @@ public class ResultService {
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "Test12";
 
-    // Load MariaDB driver
     static {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
@@ -17,7 +18,9 @@ public class ResultService {
 
     private static String getDatabaseHost() {
         String host = System.getenv("DB_HOST");
-        if (host == null || host.isEmpty()) host = "db"; // use Docker service name
+        if (host == null || host.isEmpty() || "db".equals(host)) {
+            return "127.0.0.1";
+        }
         return host;
     }
 
@@ -28,11 +31,9 @@ public class ResultService {
 
     public static void saveResult(double n1, double n2, double sum, double product, double subtraction, double division) {
         String dbUrl = getDatabaseUrl();
-
         try (Connection conn = DriverManager.getConnection(dbUrl, DB_USER, DB_PASSWORD);
              Statement stmt = conn.createStatement()) {
 
-            // Create table if it doesn't exist
             String createTable = """
                 CREATE TABLE IF NOT EXISTS calc_results (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -47,7 +48,6 @@ public class ResultService {
                 """;
             stmt.executeUpdate(createTable);
 
-            // Insert the result
             String insert = "INSERT INTO calc_results (number1, number2, sum_result, product_result, sub_result, div_result) VALUES (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(insert)) {
                 ps.setDouble(1, n1);
@@ -58,13 +58,9 @@ public class ResultService {
                 ps.setDouble(6, division);
                 ps.executeUpdate();
             }
-
-            System.out.println("✅ Result saved: " + n1 + ", " + n2 + " → Sum=" + sum + ", Product=" + product);
-
-
+            System.out.println("✅ Result saved to database.");
         } catch (SQLException e) {
-            System.err.println("❌ Failed to save result to DB: " + dbUrl);
-            e.printStackTrace();
+            System.err.println("❌ Database error: " + e.getMessage());
         }
     }
 }
