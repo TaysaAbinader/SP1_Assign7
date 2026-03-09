@@ -6,7 +6,7 @@
 
 <VBox spacing="10" alignment="CENTER"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="CalculatorController">
+      fx:controller="org.example.CalculatorController">
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
@@ -17,7 +17,7 @@
     <TextField fx:id="number1Field" promptText="Number 1"/>
     <TextField fx:id="number2Field" promptText="Number 2"/>
 
-    <Button text="Calculate Save" onAction="#onCalculateClick"/>
+    <Button fx:id="calculateButton" text="Calculate Save" onAction="#onCalculateClick"/>
 
     <Label fx:id="resultLabel"/>
 

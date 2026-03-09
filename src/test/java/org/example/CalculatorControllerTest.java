@@ -1,31 +1,43 @@
 package org.example;
 
+import org.testfx.framework.junit5.ApplicationTest;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.LabeledMatchers.hasText;
 
-class CalculatorControllerTest {
+public class CalculatorControllerTest extends ApplicationTest {
 
-    @Test
-    void testCalculateMath() {
-        CalculatorController controller = new CalculatorController();
-
-        // Input: 10 and 2
-        double[] results = controller.calculate(10.0, 2.0);
-
-        // Assertions
-        assertEquals(12.0, results[0], "Sum should be 12");
-        assertEquals(20.0, results[1], "Product should be 20");
-        assertEquals(8.0, results[2], "Subtraction should be 8");
-        assertEquals(5.0, results[3], "Division should be 5");
+    @Override
+    public void start(Stage stage) throws Exception {
+        // Load your FXML and start the actual UI
+        Parent root = FXMLLoader.load(getClass().getResource("/calculator.fxml"));
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
     @Test
-    void testDivisionByZero() {
-        CalculatorController controller = new CalculatorController();
+    void testCalculateMathUI() {
+        // 1. Enter numbers into text fields (replace #id with your actual FXML fx:id)
+        clickOn("#number1Field").write("10");
+        clickOn("#number2Field").write("2");
 
-        // Input: 10 and 0
-        double[] results = controller.calculate(10.0, 0.0);
+        // 2. Click the calculate button
+        clickOn("#calculateButton");
 
-        assertEquals(0.0, results[3], "Division by zero should return 0.0 per requirements");
+        // 3. Verify the labels show the correct results
+        verifyThat("#resultLabel", hasText("Sum: 12.0, Product: 20.0, Subtraction: 8.0, Division: 5.0"));
+    }
+
+    @Test
+    void testDivisionByZeroUI() {
+        clickOn("#number1Field").write("10");
+        clickOn("#number2Field").write("0");
+        clickOn("#calculateButton");
+
+        verifyThat("#resultLabel", hasText("Sum: 10.0, Product: 0.0, Subtraction: 10.0, Division: 0.0"));
     }
 }
