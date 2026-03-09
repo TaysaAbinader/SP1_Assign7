@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         // Define your Docker Hub info here
-        DOCKER_IMAGE = "tfabinader/sp1-inclass-assignment"
+        DOCKER_IMAGE = "tfabinader/calculator-demo"
         // This ID must match the 'ID' you gave your credentials in Jenkins
-        DOCKER_HUB_CREDS = 'docker-hub-creds'
+        DOCKER_HUB_CREDS = 'docker-hub-pat'
     }
 
     tools {
@@ -62,6 +62,9 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
+                    // Force Docker to use the default local engine context
+                    sh "docker context use default"
+
                     // This block handles the 'docker login' and 'docker logout' automatically
                     withDockerRegistry([credentialsId: "${DOCKER_HUB_CREDS}", url: '']) {
                         sh "docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}"
