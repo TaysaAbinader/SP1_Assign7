@@ -6,8 +6,7 @@ ENV DISPLAY=host.docker.internal:0.0
 
 # Install dependencies for GUI + Maven build
 RUN apt-get update && \
-    apt-get install -y maven xvfb wget unzip libgtk-3-0 libgbm1 libx11-6 && \
-    apt-get install -y libfontconfig1 libasound2t64 fonts-dejavu-core && \
+    apt-get install -y maven wget unzip libgtk-3-0 libgbm1 libx11-6 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Download JavaFX SDK 21
@@ -31,4 +30,4 @@ RUN ls -l target
 COPY target/sum-product_fx-1.0-SNAPSHOT.jar app.jar
 
 # Run the **shaded JAR** with JavaFX modules
-#RUN xfvb-run -a java --module-path /opt/javafx-sdk-21/lib --add-modules javafx.controls,javafx.fxml -jar app.jar
+CMD ["java", "--module-path", "/opt/javafx-sdk-21/lib", "--add-modules", "javafx.controls,javafx.fxml", "-jar", "target/sum-product_fx-1.0-SNAPSHOT.jar"]

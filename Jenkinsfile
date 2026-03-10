@@ -29,7 +29,11 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'mvn test'
+                sh 'mvn test \
+                    -Dglass.platform=Monocle \
+                    -Dmonocle.platform=Headless \
+                    -Dprism.order=sw \
+                    -Djava.awt.headless=true'
             }
         }
         stage('Code Coverage') {
